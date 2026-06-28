@@ -1,0 +1,37 @@
+{
+  "collections": {
+    "products": [
+      { "name": "sku", "type": "string" },
+      { "name": "name", "type": "string" },
+      { "name": "category", "type": "string" },
+      { "name": "subcategory", "type": "string", "optional": true },
+      { "name": "brand", "type": "string", "optional": true },
+      { "name": "model", "type": "string", "optional": true },
+      { "name": "priceBase", "type": "number" },
+      { "name": "priceWholesale", "type": "number", "optional": true },
+      { "name": "stock", "type": "number" },
+      { "name": "moq", "type": "number", "optional": true },
+      { "name": "description", "type": "string", "optional": true },
+      { "name": "certifications", "type": "array", "optional": true },
+      { "name": "leadTime", "type": "string", "optional": true },
+      { "name": "active", "type": "boolean" },
+      { "name": "companyId", "type": "string" },
+      { "name": "createdAt", "type": "timestamp" }
+    ],
+    "rfqs": [
+      { "name": "buyerName", "type": "string" },
+      { "name": "buyerCompanyId", "type": "string" },
+      { "name": "title", "type": "string" },
+      { "name": "status", "type": "string" },
+      { "name": "priority", "type": "string", "optional": true },
+      { "name": "sellerCompanyId", "type": "string" },
+      { "name": "items", "type": "array" },
+      { "name": "createdAt", "type": "timestamp" }
+    ],
+    "companies": [
+      { "name": "name", "type": "string" },
+      { "name": "userId", "type": "string" },
+      { "name": "email", "type": "string" }
+    ]
+  }
+}
