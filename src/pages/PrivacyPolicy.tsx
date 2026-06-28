@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
             <p>
               Bienvenido a XPatagonia. Respetamos su privacidad y nos comprometemos a proteger sus datos personales. 
               Esta política de privacidad le informará sobre cómo cuidamos sus datos personales cuando visita nuestra 
-              plataforma o interactúa con nuestros servicios (incluyendo WhatsApp Business), y le informará sobre sus 
+              plataforma o interactúa con nuestros servicios, y le informará sobre sus 
               derechos de privacidad y cómo la ley lo protege.
             </p>
 
@@ -34,23 +34,12 @@ export default function PrivacyPolicy() {
             <p>Podemos recopilar, usar, almacenar y transferir diferentes tipos de datos personales sobre usted que hemos agrupado de la siguiente manera:</p>
             <ul>
               <li><strong>Datos de Identidad:</strong> incluye nombre, apellido, nombre de usuario o identificador similar.</li>
-              <li><strong>Datos de Contacto:</strong> incluye dirección de facturación, dirección de entrega, dirección de correo electrónico y números de teléfono (incluyendo los utilizados para WhatsApp).</li>
+              <li><strong>Datos de Contacto:</strong> incluye dirección de facturación, dirección de entrega, dirección de correo electrónico y números de teléfono.</li>
               <li><strong>Datos Técnicos:</strong> incluye dirección de protocolo de Internet (IP), sus datos de inicio de sesión, tipo y versión del navegador, configuración de zona horaria y ubicación.</li>
               <li><strong>Datos de Perfil:</strong> incluye su nombre de usuario y contraseña, compras o pedidos realizados por usted, sus intereses, preferencias, comentarios y respuestas a encuestas.</li>
             </ul>
 
-            <h2>3. Uso de la API de WhatsApp Business</h2>
-            <p>
-              Nuestra plataforma utiliza la API oficial de WhatsApp Business para comunicarnos con nuestros clientes 
-              para enviar notificaciones sobre pedidos, soporte técnico y actualizaciones de servicios.
-            </p>
-            <ul>
-              <li>Los números de teléfono de los clientes solo se utilizarán con su consentimiento previo (opt-in).</li>
-              <li>No compartimos la información de sus mensajes de WhatsApp con terceros ajenos a la operación y prestación del servicio.</li>
-              <li>Usted puede optar por darse de baja (opt-out) de las comunicaciones de WhatsApp en cualquier momento respondiendo "STOP" o contactando a nuestro soporte.</li>
-            </ul>
-
-            <h2>4. Cómo utilizamos sus datos personales</h2>
+            <h2>3. Cómo utilizamos sus datos personales</h2>
             <p>Solo usaremos sus datos personales cuando la ley nos lo permita. Más comúnmente, usaremos sus datos personales en las siguientes circunstancias:</p>
             <ul>
               <li>Cuando necesitemos ejecutar el contrato que estamos a punto de celebrar o hemos celebrado con usted.</li>
@@ -58,7 +47,7 @@ export default function PrivacyPolicy() {
               <li>Cuando necesitemos cumplir con una obligación legal.</li>
             </ul>
 
-            <h2>5. Seguridad de los datos</h2>
+            <h2>4. Seguridad de los datos</h2>
             <p>
               Hemos implementado medidas de seguridad adecuadas para evitar que sus datos personales se pierdan 
               accidentalmente, se utilicen o se acceda a ellos de forma no autorizada, se modifiquen o divulguen. 
@@ -66,7 +55,7 @@ export default function PrivacyPolicy() {
               otros terceros que tengan una necesidad comercial de conocerlos.
             </p>
 
-            <h2>6. Sus derechos legales</h2>
+            <h2>5. Sus derechos legales</h2>
             <p>Bajo ciertas circunstancias, usted tiene derechos bajo las leyes de protección de datos en relación con sus datos personales, incluyendo el derecho a:</p>
             <ul>
               <li>Solicitar acceso a sus datos personales.</li>
@@ -78,7 +67,7 @@ export default function PrivacyPolicy() {
               <li>Derecho a retirar el consentimiento.</li>
             </ul>
 
-            <h2>7. Contacto</h2>
+            <h2>6. Contacto</h2>
             <p>
               Si tiene alguna pregunta sobre esta política de privacidad o nuestras prácticas de privacidad, 
               comuníquese con nosotros por correo electrónico a: <strong>xpatagonia.com@gmail.com</strong>

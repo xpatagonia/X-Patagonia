@@ -27,7 +27,6 @@ export default function CompanyInbox() {
     type: 'external',
     status: 'lead',
     website: '',
-    whatsapp: '',
     cuitRut: '',
     socialMedia: '',
     industry: '',
@@ -187,7 +186,7 @@ export default function CompanyInbox() {
       }
       setShowAddContact(false);
       setEditingContactId(null);
-      setNewContact({ entityType: 'contact', name: '', company: '', role: '', email: '', phone: '', type: 'external', status: 'lead', website: '', whatsapp: '', cuitRut: '', socialMedia: '', industry: '', location: '' });
+      setNewContact({ entityType: 'contact', name: '', company: '', role: '', email: '', phone: '', type: 'external', status: 'lead', website: '', cuitRut: '', socialMedia: '', industry: '', location: '' });
     } catch (err) {
       console.error("Error saving contact", err);
     }
@@ -207,7 +206,6 @@ export default function CompanyInbox() {
       type: c.type || 'external',
       status: c.status || 'lead',
       website: c.website || '',
-      whatsapp: c.whatsapp || '',
       cuitRut: c.cuitRut || '',
       socialMedia: c.socialMedia || '',
       industry: c.industry || '',
@@ -489,7 +487,7 @@ export default function CompanyInbox() {
                    <button 
                       onClick={() => {
                         setEditingContactId(null);
-                        setNewContact({ entityType: 'contact', name: '', company: '', role: '', email: '', phone: '', type: 'external', status: 'lead', website: '', whatsapp: '', cuitRut: '', socialMedia: '', industry: '', location: '' });
+                        setNewContact({ entityType: 'contact', name: '', company: '', role: '', email: '', phone: '', type: 'external', status: 'lead', website: '', cuitRut: '', socialMedia: '', industry: '', location: '' });
                         setShowAddContact(true);
                       }}
                       className="flex items-center gap-2 px-4 py-2.5 bg-purple-500 hover:bg-purple-600 border border-transparent rounded-xl text-sm font-bold text-white shadow-lg shadow-purple-500/20 transition w-full sm:w-auto justify-center">
@@ -650,12 +648,6 @@ export default function CompanyInbox() {
                                  <a href={`tel:${selectedContact.phone}`} className="hover:underline hover:text-purple-500 break-all">{selectedContact.phone}</a>
                               </div>
                             )}
-                            {selectedContact.whatsapp && (
-                              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
-                                 <MessageCircle className="w-4 h-4 shrink-0" /> 
-                                 <a href={`https://wa.me/${selectedContact.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="hover:underline hover:text-purple-500 break-all">{selectedContact.whatsapp}</a>
-                              </div>
-                            )}
                             {selectedContact.socialMedia && (
                               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
                                  <Hash className="w-4 h-4 shrink-0" /> 
@@ -667,7 +659,7 @@ export default function CompanyInbox() {
                          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/5 space-y-3 font-bold">
                             <button 
                                onClick={() => {
-                                 setComposeData({ to: selectedContact.email || selectedContact.phone || selectedContact.whatsapp || '', subject: '', body: templates.find(t => t.label === 'Firma Automática')?.content || '' });
+                                 setComposeData({ to: selectedContact.email || selectedContact.phone || '', subject: '', body: templates.find(t => t.label === 'Firma Automática')?.content || '' });
                                  setShowCompose(true);
                                }}
                                className="flex w-full items-center justify-center gap-2 px-4 py-2.5 bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow-lg shadow-purple-500/20 transition"
@@ -854,12 +846,7 @@ export default function CompanyInbox() {
                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label>
                      <input type="text" value={newContact.phone} onChange={e => setNewContact({...newContact, phone: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#110E17] border border-slate-200 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="+54 9..." />
                    </div>
-                   {newContact.entityType === 'company' ? (
-                     <div>
-                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">WhatsApp / Celular</label>
-                       <input type="text" value={newContact.whatsapp} onChange={e => setNewContact({...newContact, whatsapp: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#110E17] border border-slate-200 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="+54 9..." />
-                     </div>
-                   ) : (
+                   {newContact.entityType !== 'company' && (
                      <div>
                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Estado</label>
                        <select value={newContact.status} onChange={e => setNewContact({...newContact, status: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#110E17] border border-slate-200 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-900 dark:text-white">
@@ -992,7 +979,7 @@ export default function CompanyInbox() {
                     type="text"
                     value={composeData.to}
                     onChange={(e) => setComposeData({ ...composeData, to: e.target.value })}
-                    placeholder="Para: (ej. correo@empresa.com o WhatsApp +549...)"
+                    placeholder="Para: (ej. correo@empresa.com o teléfono +549...)"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#110E17] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 font-medium"
                   />
                 </div>
@@ -1050,7 +1037,7 @@ export default function CompanyInbox() {
 
               <div className="flex justify-between items-center mt-6 pt-6 border-t border-slate-200 dark:border-white/5">
                 <div className="text-xs text-slate-500 flex items-center gap-1">
-                  <Mail className="w-4 h-4" /> Enviar vía Email o WhatsApp
+                  <Mail className="w-4 h-4" /> Enviar vía Email
                 </div>
                 <div className="flex gap-3">
                   <button onClick={() => setShowCompose(false)} className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition">

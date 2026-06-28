@@ -16,7 +16,6 @@ interface Email {
 }
 
 export default function Inbox() {
-  const [activeTab, setActiveTab] = useState<'email' | 'whatsapp'>('email');
   const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,11 +26,6 @@ export default function Inbox() {
   const [composeSubject, setComposeSubject] = useState('');
   const [composeBody, setComposeBody] = useState('');
   const [sending, setSending] = useState(false);
-
-  // WhatsApp state
-  const [waTo, setWaTo] = useState('');
-  const [waMessage, setWaMessage] = useState('');
-  const [waSending, setWaSending] = useState(false);
 
   const fetchEmails = async () => {
     setLoading(true);
@@ -61,10 +55,8 @@ export default function Inbox() {
   };
 
   useEffect(() => {
-    if (activeTab === 'email') {
-      fetchEmails();
-    }
-  }, [activeTab]);
+    fetchEmails();
+  }, []);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,36 +91,6 @@ export default function Inbox() {
     }
   };
 
-  const handleSendWhatsApp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setWaSending(true);
-    try {
-      const user = auth.currentUser;
-      const token = await user?.getIdToken();
-      const response = await fetch(`${getApiUrl()}/api/whatsapp/send`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          to: waTo,
-          message: waMessage
-        })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Error enviando el mensaje de WhatsApp');
-      
-      alert('Mensaje de WhatsApp enviado exitosamente.');
-      setWaTo('');
-      setWaMessage('');
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setWaSending(false);
-    }
-  };
-
   const handleReply = () => {
     if (!selectedEmail) return;
     setComposeTo(selectedEmail.from);
@@ -140,34 +102,9 @@ export default function Inbox() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0A080C] pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-6 h-[calc(100vh-8rem)] flex flex-col gap-4">
-        
-        {/* Navigation Tabs */}
-        <div className="flex gap-4">
-          <button
-            onClick={() => setActiveTab('email')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors ${
-              activeTab === 'email' 
-                ? 'bg-purple-600 text-white shadow-md' 
-                : 'bg-white dark:bg-[#1A1625] text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
-            }`}
-          >
-            <Mail className="w-5 h-5" /> Correo Corporativo
-          </button>
-          <button
-            onClick={() => setActiveTab('whatsapp')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-colors ${
-              activeTab === 'whatsapp' 
-                ? 'bg-green-600 text-white shadow-md' 
-                : 'bg-white dark:bg-[#1A1625] text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
-            }`}
-          >
-            <MessageCircle className="w-5 h-5" /> WhatsApp Business
-          </button>
-        </div>
 
         <div className="flex flex-col h-full bg-white dark:bg-[#1A1625] rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
           
-          {activeTab === 'email' && (
             <>
               {/* Toolbar */}
               <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between bg-slate-50 dark:bg-[#110E17]">
@@ -333,64 +270,6 @@ export default function Inbox() {
                 </div>
               </div>
             </>
-          )}
-
-          {activeTab === 'whatsapp' && (
-            <div className="flex flex-1 overflow-hidden bg-slate-50 dark:bg-[#110E17]">
-              <div className="w-full max-w-2xl mx-auto p-8 flex flex-col h-full">
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-3">
-                    <MessageCircle className="text-green-500 w-8 h-8" />
-                    Enviar Mensaje de WhatsApp
-                  </h2>
-                  <p className="text-slate-600 dark:text-slate-400">
-                    Envía notificaciones o mensajes a clientes a través de la API oficial de WhatsApp Business.
-                  </p>
-                </div>
-
-                <form onSubmit={handleSendWhatsApp} className="flex-1 flex flex-col gap-6 bg-white dark:bg-[#1A1625] p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-white/10">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Número de destino (con código de país):</label>
-                    <input 
-                      type="text" 
-                      required
-                      value={waTo}
-                      onChange={e => setWaTo(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-[#110E17] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="Ej: 5491123456789"
-                    />
-                    <p className="text-xs text-slate-500 mt-2">No incluyas el signo '+' ni espacios. Asegúrate de incluir el código de país.</p>
-                  </div>
-                  
-                  <div className="flex-1 flex flex-col">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Mensaje:</label>
-                    <textarea 
-                      required
-                      value={waMessage}
-                      onChange={e => setWaMessage(e.target.value)}
-                      className="flex-1 w-full bg-slate-50 dark:bg-[#110E17] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-4 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none font-sans"
-                      placeholder="Escribe tu mensaje aquí..."
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-white/10">
-                    <button 
-                      type="submit"
-                      disabled={waSending}
-                      className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
-                    >
-                      {waSending ? 'Enviando...' : (
-                        <>
-                          <Send className="w-5 h-5" /> Enviar por WhatsApp
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
         </div>
       </div>
     </div>

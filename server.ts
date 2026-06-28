@@ -14,7 +14,6 @@ import { insights } from "./src/db/schema.ts";
 import { desc, eq } from "drizzle-orm";
 
 import { fetchEmails, sendEmail } from "./src/services/emailService.ts";
-import { sendWhatsAppMessage, verifyWhatsAppWebhook } from "./src/services/whatsappService.ts";
 
 async function startServer() {
   const app = express();
@@ -22,38 +21,6 @@ async function startServer() {
 
   // Allow cross-origin requests from the custom domain
   app.use(cors({ origin: true, credentials: true }));
-
-  // Middleware for parsing JSON with WhatsApp Webhook Signature Verification
-  app.use(express.json({
-    verify: (req: any, res, buf) => {
-      if (req.originalUrl.startsWith('/api/whatsapp/webhook') && req.method === 'POST') {
-        const signature = req.headers['x-hub-signature-256'] as string;
-        const appSecret = process.env.WHATSAPP_APP_SECRET;
-        
-        if (!signature) {
-          throw new Error("No se proporcionó la firma (signature) en la petición de WhatsApp.");
-        }
-        if (!appSecret) {
-          throw new Error("Falta la variable de entorno WHATSAPP_APP_SECRET para verificar el webhook.");
-        }
-
-        const expectedSignature = 'sha256=' + crypto.createHmac('sha256', appSecret).update(buf).digest('hex');
-        
-        if (signature !== expectedSignature) {
-          throw new Error("Firma de WhatsApp inválida.");
-        }
-      }
-    }
-  }));
-
-  // Error handler para cuando falla el verify del body parser
-  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    if (err && err.message && (err.message.includes("Firma de WhatsApp") || err.message.includes("Falta la variable"))) {
-      res.status(401).send(err.message);
-      return;
-    }
-    next(err);
-  });
 
   // API to list insights
   app.get("/api/insights", async (req, res) => {
@@ -174,41 +141,6 @@ async function startServer() {
       console.error("Error sending email:", error);
       res.status(500).json({ error: error.message || "Failed to send email" });
     }
-  });
-
-  app.post("/api/whatsapp/send", requireAuth as any, async (req: AuthRequest, res) => {
-    try {
-      const { to, message } = req.body;
-      if (!to || !message) {
-         res.status(400).json({ error: "Missing required fields: to, message" });
-         return;
-      }
-      const result = await sendWhatsAppMessage(to, message);
-      res.json({ success: true, result });
-    } catch (error: any) {
-      console.error("Error sending WhatsApp message:", error);
-      res.status(500).json({ error: error.message || "Failed to send WhatsApp message" });
-    }
-  });
-
-  // Webhook for WhatsApp verification
-  app.get("/api/whatsapp/webhook", (req, res) => {
-    try {
-      const mode = req.query['hub.mode'] as string;
-      const token = req.query['hub.verify_token'] as string;
-      const challenge = req.query['hub.challenge'] as string;
-      const responseChallenge = verifyWhatsAppWebhook(mode, token, challenge);
-      res.status(200).send(responseChallenge);
-    } catch (error: any) {
-      res.status(403).json({ error: error.message });
-    }
-  });
-
-  // Webhook for receiving WhatsApp messages
-  app.post("/api/whatsapp/webhook", (req, res) => {
-    console.log("Received WhatsApp webhook:", JSON.stringify(req.body, null, 2));
-    // Here you would handle incoming messages and save them to the DB/state
-    res.sendStatus(200);
   });
 
   app.post("/api/generate-insights", async (req, res) => {

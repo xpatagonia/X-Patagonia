@@ -18,7 +18,7 @@ const MOCK_PROVIDERS: Provider[] = [
 ];
 
 /**
- * Función que simula la interacción con un servicio de email (SendGrid, Resend) o WhatsApp
+ * Función que simula la interacción con un servicio de email (SendGrid, Resend)
  * para iterar la lista de proveedores del directorio y notificarles de un nuevo RFQ.
  */
 export async function notifyProvidersForRfq(rfqCategory: string, rfqTitle: string, rfqId: number) {
