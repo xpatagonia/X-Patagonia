@@ -88,7 +88,12 @@ export default function Inbox() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Error enviando el correo');
       
-      alert('Correo enviado exitosamente.');
+      if (data.mocked) {
+        alert('AVISO: El servidor no tiene configuradas las credenciales SMTP. El envío fue simulado y NO se envió realmente. Configure los Secrets SMTP_HOST, SMTP_USER, etc. en AI Studio.');
+      } else {
+        alert('Correo enviado exitosamente.');
+      }
+      
       setShowCompose(false);
       setComposeTo('');
       setComposeSubject('');

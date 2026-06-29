@@ -138,7 +138,11 @@ async function startServer() {
          return;
       }
       const result = await sendEmail(to, subject, text, html);
-      res.json({ success: true, messageId: result.messageId });
+      res.json({ 
+        success: true, 
+        messageId: result.messageId, 
+        mocked: result.mocked 
+      });
     } catch (error: any) {
       console.error("Error sending email:", error);
       res.status(500).json({ error: error.message || "Failed to send email" });

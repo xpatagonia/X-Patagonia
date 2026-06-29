@@ -106,7 +106,7 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
 export async function sendEmail(to: string, subject: string, text: string, html?: string) {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
     console.warn("SMTP configuration is missing. Simulating email send.");
-    return { messageId: "mock-id-" + Date.now() };
+    return { messageId: "mock-id-" + Date.now(), mocked: true };
   }
 
   const transporter = nodemailer.createTransport({
