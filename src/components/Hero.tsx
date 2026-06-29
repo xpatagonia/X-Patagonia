@@ -31,8 +31,8 @@ function ModernTextReveal({ text, onComplete }: { text: string; onComplete?: () 
           <motion.span
             key={i}
             variants={{
-              hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
-              visible: { opacity: 1, y: 0, filter: "blur(0px)" }
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
             }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className={isHighlight ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600" : "text-slate-900 dark:text-white"}
@@ -139,7 +139,10 @@ export default function Hero() {
             transition={{ y: { repeat: Infinity, duration: 3, ease: "easeInOut" }, opacity: { duration: 0.5 } }}
             className="inline-flex items-center px-4 py-2 rounded-full border border-slate-200 dark:border-white/10 bg-white/5 text-slate-700 dark:text-slate-300 text-[10px] font-bold uppercase tracking-widest mb-10 shadow-sm backdrop-blur-sm"
           >
-            {React.createElement(framesConfig[activeFrame].icon, { className: "w-4 h-4 mr-2 text-purple-500" })}
+            {(() => {
+              const Icon = framesConfig[activeFrame].icon;
+              return <Icon className="w-4 h-4 mr-2 text-purple-500" />;
+            })()}
             {framesConfig[activeFrame].tag}
           </motion.div>
           
@@ -238,7 +241,7 @@ export default function Hero() {
 
                 {framesConfig[activeFrame].type === 'directory' && (
                   <div className="flex justify-center mt-8">
-                    <Link to="/directory" className="px-10 py-5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[13px] uppercase tracking-widest font-bold rounded-2xl hover:opacity-90 transition duration-300 flex items-center shadow-lg shadow-teal-500/25">
+                    <Link to="/marketplace" className="px-10 py-5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[13px] uppercase tracking-widest font-bold rounded-2xl hover:opacity-90 transition duration-300 flex items-center shadow-lg shadow-teal-500/25">
                       Acceder al Directorio B2B
                       <ArrowRight className="w-5 h-5 ml-3" />
                     </Link>
