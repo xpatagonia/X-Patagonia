@@ -239,6 +239,36 @@ Debes formatear la salida EXACTAMENTE como un objeto JSON con las siguientes cla
     }
   });
 
+  app.post("/api/hero-suggestions", async (req, res) => {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("GEMINI_API_KEY no configurada");
+      }
+      
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey, httpOptions: { headers: { 'User-Agent': 'aistudio-build' } } });
+      
+      const prompt = `Eres el asistente inteligente de xPatagonia, el Hub de Servicios para la Industria Sostenible.
+Genera 3 sugerencias breves de búsqueda de servicios B2B o insumos industriales relevantes para la región (ej. "Auditoría Ambiental", "Ingeniería Naval", "Logística de Frío").
+Devuelve ÚNICAMENTE un array JSON válido de 3 strings, sin markdown.`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+      });
+
+      let rawText = response.text || '[]';
+      rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+      const suggestions = JSON.parse(rawText);
+      res.json({ suggestions });
+    } catch (error: any) {
+      console.error("Error generating hero suggestions:", error);
+      res.status(500).json({ error: error.message || "Failed to generate suggestions" });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
