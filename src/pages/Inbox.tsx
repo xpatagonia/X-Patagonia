@@ -31,7 +31,8 @@ export default function Inbox() {
     setLoading(true);
     setError('');
     try {
-      const user = userObj || auth.currentUser;
+      // If userObj is an event or not a firebase user, fallback to auth.currentUser
+      const user = (userObj && typeof userObj.getIdToken === 'function') ? userObj : auth.currentUser;
       if (!user) {
         setError('Debes iniciar sesión para ver los correos.');
         return;
@@ -122,7 +123,7 @@ export default function Inbox() {
                 </div>
                 <div className="flex gap-3">
                   <button 
-                    onClick={fetchEmails}
+                    onClick={() => fetchEmails()}
                     className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2"
                     title="Actualizar"
                   >
