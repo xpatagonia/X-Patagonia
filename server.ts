@@ -18,6 +18,8 @@ import { fetchEmails, sendEmail } from "./src/services/emailService.ts";
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
+  
+  app.use(express.json());
 
   // Allow cross-origin requests from the custom domain
   app.use(cors({ origin: true, credentials: true }));

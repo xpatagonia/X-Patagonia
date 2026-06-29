@@ -27,11 +27,11 @@ export default function Inbox() {
   const [composeBody, setComposeBody] = useState('');
   const [sending, setSending] = useState(false);
 
-  const fetchEmails = async () => {
+  const fetchEmails = async (userObj?: any) => {
     setLoading(true);
     setError('');
     try {
-      const user = auth.currentUser;
+      const user = userObj || auth.currentUser;
       if (!user) {
         setError('Debes iniciar sesión para ver los correos.');
         return;
@@ -55,7 +55,15 @@ export default function Inbox() {
   };
 
   useEffect(() => {
-    fetchEmails();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchEmails(user);
+      } else {
+        setLoading(false);
+        setError('Debes iniciar sesión para ver los correos.');
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleSend = async (e: React.FormEvent) => {
