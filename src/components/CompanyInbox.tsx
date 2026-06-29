@@ -434,10 +434,36 @@ export default function CompanyInbox() {
                       className="flex-1 px-4 py-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#110E17] text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none"
                     />
                     <button 
-                      onClick={() => {
+                      onClick={async () => {
                         if (replyText.trim()) {
-                          setReplyText("");
-                          // Simulate send
+                          try {
+                            const user = auth.currentUser;
+                            const token = await user?.getIdToken();
+                            const { getApiUrl } = await import('../lib/apiConfig');
+                            const response = await fetch(`${getApiUrl()}/api/emails/send`, {
+                              method: 'POST',
+                              headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}` 
+                              },
+                              body: JSON.stringify({
+                                to: 'info@' + selectedRfq.buyer.replace(/\s+/g, '').toLowerCase() + '.com',
+                                subject: `Re: Solicitud de cotización #${selectedRfq.rfqId}`,
+                                text: replyText
+                              })
+                            });
+                            const data = await response.json();
+                            if (!response.ok) throw new Error(data.error || 'Error enviando el correo');
+                            
+                            if (data.mocked) {
+                              alert('AVISO: El servidor no tiene configuradas las credenciales SMTP. El envío fue simulado y NO se envió realmente. Configure los Secrets SMTP_HOST, SMTP_USER, etc. en AI Studio.');
+                            } else {
+                              alert('Respuesta enviada exitosamente.');
+                            }
+                            setReplyText("");
+                          } catch (err: any) {
+                            alert(err.message);
+                          }
                         }
                       }}
                       className="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg flex items-center justify-center transition"
@@ -1044,10 +1070,37 @@ export default function CompanyInbox() {
                     Cancelar
                   </button>
                   <button 
-                    onClick={() => {
+                    onClick={async () => {
                       if (composeData.to && composeData.body) {
-                        setComposeData({ to: '', subject: '', body: '' });
-                        setShowCompose(false);
+                        try {
+                          const user = auth.currentUser;
+                          const token = await user?.getIdToken();
+                          const { getApiUrl } = await import('../lib/apiConfig');
+                          const response = await fetch(`${getApiUrl()}/api/emails/send`, {
+                            method: 'POST',
+                            headers: { 
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}` 
+                            },
+                            body: JSON.stringify({
+                              to: composeData.to,
+                              subject: composeData.subject,
+                              text: composeData.body
+                            })
+                          });
+                          const data = await response.json();
+                          if (!response.ok) throw new Error(data.error || 'Error enviando el correo');
+                          
+                          if (data.mocked) {
+                            alert('AVISO: El servidor no tiene configuradas las credenciales SMTP. El envío fue simulado y NO se envió realmente. Configure los Secrets SMTP_HOST, SMTP_USER, etc. en AI Studio.');
+                          } else {
+                            alert('Correo enviado exitosamente.');
+                          }
+                          setComposeData({ to: '', subject: '', body: '' });
+                          setShowCompose(false);
+                        } catch (err: any) {
+                          alert(err.message);
+                        }
                       }
                     }}
                     disabled={!composeData.to || !composeData.body}
