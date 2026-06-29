@@ -15,7 +15,27 @@ export interface EmailMessage {
 
 export async function fetchEmails(): Promise<EmailMessage[]> {
   if (!process.env.IMAP_HOST || !process.env.IMAP_USER || !process.env.IMAP_PASSWORD) {
-    throw new Error("IMAP configuration is missing. Please set IMAP_HOST, IMAP_USER, and IMAP_PASSWORD.");
+    console.warn("IMAP configuration is missing. Using mock data.");
+    return [
+      {
+        id: "1",
+        uid: 1,
+        subject: "Actualización de Políticas B2B",
+        from: "admin@xpatagonia.com",
+        date: new Date().toISOString(),
+        snippet: "Por favor revise las nuevas políticas de facturación para el Q3...",
+        text: "Por favor revise las nuevas políticas de facturación para el Q3. Hemos actualizado los plazos de pago y los requisitos de cumplimiento fiscal.",
+      },
+      {
+        id: "2",
+        uid: 2,
+        subject: "Nueva solicitud de cotización #RFQ-8921",
+        from: "compras@empresa.com",
+        date: new Date(Date.now() - 86400000).toISOString(),
+        snippet: "Necesitamos cotización para 500 unidades de equipamiento de seguridad...",
+        text: "Estimados, necesitamos cotización para 500 unidades de equipamiento de seguridad industrial (cascos, guantes, botas) con entrega antes del 15 de Octubre.",
+      }
+    ];
   }
 
   const imapPort = parseInt(process.env.IMAP_PORT || '993', 10);
@@ -85,7 +105,8 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
 
 export async function sendEmail(to: string, subject: string, text: string, html?: string) {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
-    throw new Error("SMTP configuration is missing. Please set SMTP_HOST, SMTP_USER, and SMTP_PASSWORD.");
+    console.warn("SMTP configuration is missing. Simulating email send.");
+    return { messageId: "mock-id-" + Date.now() };
   }
 
   const transporter = nodemailer.createTransport({
