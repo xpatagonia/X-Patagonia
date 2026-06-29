@@ -183,7 +183,7 @@ export default function Dashboard() {
       {isNewModalOpen && (
         <div className="fixed inset-0 z-[9998] flex items-center justify-center p-4">
           <motion.div 
-            initial={{ bg: 'transparent' }} 
+            initial={{ backgroundColor: 'transparent' }} 
             animate={{ backgroundColor: 'rgba(0,0,0,0.5)' }} 
             exit={{ backgroundColor: 'transparent' }} 
             className="absolute inset-0 backdrop-blur-sm" 

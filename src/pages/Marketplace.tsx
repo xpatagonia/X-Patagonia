@@ -263,7 +263,9 @@ export default function Marketplace() {
                           <span className="text-xs text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1">
                             {product.supplier || 'Compañía en Plataforma'}
                             {product.verified && (
-                              <Check className="w-3 h-3 text-emerald-500" title="Proveedor Verificado" />
+                              <span title="Proveedor Verificado">
+                                <Check className="w-3 h-3 text-emerald-500" />
+                              </span>
                             )}
                           </span>
                         </div>
@@ -407,7 +409,7 @@ export default function Marketplace() {
         {isCartOpen && (
           <div className="fixed inset-0 z-[9998] flex justify-end">
             <motion.div 
-              initial={{ bg: 'transparent' }} 
+              initial={{ backgroundColor: 'transparent' }} 
               animate={{ backgroundColor: 'rgba(0,0,0,0.5)' }} 
               exit={{ backgroundColor: 'transparent' }} 
               className="absolute inset-0 backdrop-blur-sm" 

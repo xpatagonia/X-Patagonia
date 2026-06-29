@@ -174,7 +174,7 @@ export default function EcommerceModule() {
                           <td className="px-6 py-4">
                             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                               {item.name}
-                              {item.isPublic && <Tag className="w-3 h-3 text-purple-500" title="Visible en Catálogo Público" />}
+                              {item.isPublic && <span title="Visible en Catálogo Público"><Tag className="w-3 h-3 text-purple-500" /></span>}
                             </div>
                             <div className="text-xs text-slate-500 font-mono mt-0.5">{item.sku}</div>
                           </td>
