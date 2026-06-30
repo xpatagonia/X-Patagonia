@@ -38,14 +38,19 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
     ];
   }
 
+  const imapHost = process.env.IMAP_HOST;
+  const imapUser = process.env.IMAP_USER;
   const imapPort = parseInt(process.env.IMAP_PORT || '993', 10);
+  
+  console.log(`[fetchEmails] Starting fetch. Host: ${imapHost}, Port: ${imapPort}, User: ${imapUser}, Secure: ${imapPort === 993}`);
+  
   const client = new ImapFlow({
-    host: process.env.IMAP_HOST,
+    host: imapHost,
     port: imapPort,
     secure: imapPort === 993,
     auth: {
-      user: process.env.IMAP_USER,
-      pass: process.env.IMAP_PASSWORD
+      user: imapUser as string,
+      pass: process.env.IMAP_PASSWORD as string
     },
     tls: {
       rejectUnauthorized: false
@@ -57,20 +62,28 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
   let connected = false;
 
   try {
+    console.log(`[fetchEmails] Attempting client.connect()...`);
     await client.connect();
     connected = true;
+    console.log(`[fetchEmails] Successfully connected to IMAP server.`);
     
     // Select mailbox, normally 'INBOX'
+    console.log(`[fetchEmails] Getting lock on INBOX...`);
     const lock = await client.getMailboxLock('INBOX');
+    console.log(`[fetchEmails] Lock on INBOX acquired.`);
     try {
       // Fetch latest 20 emails
+      console.log(`[fetchEmails] Fetching messages from 1:*...`);
       const messages = await client.fetch('1:*', { envelope: true, source: true }, { uid: true });
       
       // We will collect them and sort them
       const rawMessages: any[] = [];
+      let messageCount = 0;
       for await (let message of messages) {
         rawMessages.push(message);
+        messageCount++;
       }
+      console.log(`[fetchEmails] Fetched ${messageCount} messages in total. Processing last 20.`);
       
       // Process only the last 20 messages for performance
       const recentMessages = rawMessages.slice(-20).reverse();
@@ -88,11 +101,13 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
           html: parsed.html || parsed.textAsHtml,
         });
       }
+      console.log(`[fetchEmails] Successfully processed ${emails.length} emails.`);
     } finally {
+      console.log(`[fetchEmails] Releasing INBOX lock...`);
       lock.release();
     }
   } catch (error: any) {
-    console.error('Error fetching emails:', error);
+    console.error('[fetchEmails] ERROR fetching emails:', error);
     throw new Error(`IMAP Error: ${error.message || 'Fallo al conectar'}. Verifica que en Google Cloud Run estén configuradas las variables de entorno (IMAP_HOST, IMAP_USER, IMAP_PASSWORD, IMAP_PORT) y que el puerto no esté bloqueado.`);
   } finally {
     if (connected) {
