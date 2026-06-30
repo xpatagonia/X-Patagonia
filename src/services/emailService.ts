@@ -91,9 +91,9 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
     } finally {
       lock.release();
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching emails:', error);
-    throw error;
+    throw new Error(`IMAP Error: ${error.message || 'Fallo al conectar'}. Verifica que en Google Cloud Run estén configuradas las variables de entorno (IMAP_HOST, IMAP_USER, IMAP_PASSWORD, IMAP_PORT) y que el puerto no esté bloqueado.`);
   } finally {
     if (connected) {
       await client.logout();
