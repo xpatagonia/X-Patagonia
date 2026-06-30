@@ -55,7 +55,10 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
     tls: {
       rejectUnauthorized: false
     },
-    logger: false as any
+    logger: false as any,
+    // Provide a timeout so Cloud Run doesn't hang indefinitely if blocked by firewall
+    connectionTimeout: 10000,
+    greetingTimeout: 10000
   });
 
   const emails: EmailMessage[] = [];
