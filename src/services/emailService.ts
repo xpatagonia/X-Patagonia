@@ -38,7 +38,11 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
     ];
   }
 
-  const imapHost = process.env.IMAP_HOST;
+  let imapHost = process.env.IMAP_HOST;
+  // Sanitize IMAP_HOST if user accidentally pasted a URL (e.g. https://vps-...)
+  if (imapHost) {
+    imapHost = imapHost.replace(/^https?:\/\//, '').split(':')[0].split('/')[0];
+  }
   const imapUser = process.env.IMAP_USER;
   const imapPort = parseInt(process.env.IMAP_PORT || '993', 10);
   
@@ -122,31 +126,53 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
 }
 
 export async function sendEmail(to: string, subject: string, text: string, html?: string) {
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
-    console.warn("SMTP configuration is missing. Simulating email send.");
-    return { messageId: "mock-id-" + Date.now(), mocked: true };
+  const hostRaw = process.env.SMTP_HOST;
+  const userRaw = process.env.SMTP_USER;
+  const passRaw = process.env.SMTP_PASSWORD;
+
+  if (!hostRaw || !userRaw || !passRaw) {
+    const missing = [];
+    if (!hostRaw) missing.push('SMTP_HOST');
+    if (!userRaw) missing.push('SMTP_USER');
+    if (!passRaw) missing.push('SMTP_PASSWORD');
+    
+    console.warn(`SMTP configuration is missing (${missing.join(', ')}). Simulating email send.`);
+    return { messageId: "mock-id-" + Date.now(), mocked: true, missing };
   }
 
+  // Sanitize host if it is a URL
+  let smtpHost = hostRaw;
+  if (smtpHost) {
+    smtpHost = smtpHost.replace(/^https?:\/\//, '').split(':')[0].split('/')[0];
+  }
+
+  const smtpPort = parseInt(process.env.SMTP_PORT || '465', 10);
+  
+  console.log(`[sendEmail] Starting send to ${to}. Host: ${smtpHost}, Port: ${smtpPort}, User: ${userRaw}, Secure: ${smtpPort === 465}`);
+
   const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '465', 10),
-    secure: parseInt(process.env.SMTP_PORT || '465', 10) === 465,
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpPort === 465,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
+      user: userRaw,
+      pass: passRaw,
     },
     tls: {
       rejectUnauthorized: false
-    }
+    },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000
   });
 
   const info = await transporter.sendMail({
-    from: process.env.SMTP_USER,
+    from: userRaw,
     to,
     subject,
     text,
     html,
   });
 
+  console.log(`[sendEmail] Successfully sent email to ${to}. MessageId: ${info.messageId}`);
   return info;
 }

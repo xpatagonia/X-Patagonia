@@ -89,7 +89,8 @@ export default function Inbox() {
       if (!response.ok) throw new Error(data.error || 'Error enviando el correo');
       
       if (data.mocked) {
-        alert('AVISO: El servidor no tiene configuradas las credenciales SMTP. El envío fue simulado y NO se envió realmente. Configure los Secrets SMTP_HOST, SMTP_USER, etc. en AI Studio.');
+        const missingText = data.missing ? `\nFaltan: ${data.missing.join(', ')}` : '';
+        alert(`AVISO: El servidor no tiene configuradas las credenciales SMTP. El envío fue simulado y NO se envió realmente.${missingText}\nConfigure los Secrets en AI Studio.`);
       } else {
         alert('Correo enviado exitosamente.');
       }
