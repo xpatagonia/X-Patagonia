@@ -41,7 +41,7 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
   let imapHost = process.env.IMAP_HOST;
   // Sanitize IMAP_HOST if user accidentally pasted a URL (e.g. https://vps-...)
   if (imapHost) {
-    imapHost = imapHost.replace(/^https?:\/\//, '').split(':')[0].split('/')[0];
+    imapHost = imapHost.replace(/^https?:\/\//, '').split(':')[0].split('/')[0].trim();
   }
   const imapUser = process.env.IMAP_USER;
   const imapPort = parseInt(process.env.IMAP_PORT || '993', 10);
@@ -143,7 +143,7 @@ export async function sendEmail(to: string, subject: string, text: string, html?
   // Sanitize host if it is a URL
   let smtpHost = hostRaw;
   if (smtpHost) {
-    smtpHost = smtpHost.replace(/^https?:\/\//, '').split(':')[0].split('/')[0];
+    smtpHost = smtpHost.replace(/^https?:\/\//, '').split(':')[0].split('/')[0].trim();
   }
 
   const smtpPort = parseInt(process.env.SMTP_PORT || '465', 10);

@@ -78,13 +78,13 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) throw new Error('Error generando contenido');
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Error generando contenido');
       setInsightContent(data.insights);
       if (!insightTitle) setInsightTitle('Resumen Semanal de Patagonia');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('Error al generar con IA');
+      alert(`Error al generar con IA: ${error.message || 'Error desconocido'}`);
     } finally {
       setIsGenerating(false);
     }
